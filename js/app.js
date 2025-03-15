@@ -2,7 +2,7 @@ const products = [
     {
       name: 'Sony Playstation 5',
       url: 'img/products/playstation_5.png',
-      category: 'games',
+      category: 'jeux',
       price: 499.99,
     },
     {
@@ -32,7 +32,7 @@ const products = [
     {
       name: 'Nintendo Switch',
       url: 'img/products/nintendo_switch.png',
-      category: 'games',
+      category: 'jeux',
       price: 299.99,
     },
     {
@@ -86,6 +86,11 @@ const products = [
   // Init product element array
   const productElements = [];
 
+  // Filtering
+  filtersContainer.addEventListener('change', filterProducts);
+  searchInput.addEventListener('input', filterProducts);
+
+
   // Loop over products and create an element
   products.forEach((product) => {
    const productElement = createProductElement(product)
@@ -124,17 +129,42 @@ const products = [
         statusEl.innerText = 'Ajouter au panier';
         statusEl.classList.add('bg-gray-800');
         statusEl.classList.remove('bg-red-600');
-
         cartItemCount--;
     } else {
         statusEl.classList.add('added');
         statusEl.innerText = 'Retirer du panier';
         statusEl.classList.remove('bg-gray-800');
         statusEl.classList.add('bg-red-600');
-
         cartItemCount++
     }
     
     // Update cart item count
-    cartCount.innerText = cartItemCount.toString()
+    cartCount.innerText = cartItemCount.toString();
+
+  }
+
+  // Filter products by checkboxes and search input 
+  function filterProducts() {
+    // Get search term
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    // Get checked categories
+    const checkedCategories = Array.from(checkboxes).filter((check) => check.checked).map((check) => check.id);
+
+    // Loop over products and check for matches
+    productElements.forEach((productElement, index) => {
+      const product = products[index]
+
+      // Check to see if the product matchs the search or the checked categories
+      const matchesSearchTerm = product.name.toLocaleLowerCase().includes(searchTerm);
+      const isInCheckedCategory = checkedCategories.length === 0 || checkedCategories.includes(product.category)
+
+      // Show or hide product based on matches
+      if(matchesSearchTerm && isInCheckedCategory) {
+        productElement.classList.remove('hidden')
+      } else {
+        productElement.classList.add('hidden')
+      }
+
+    });
+    
   }
